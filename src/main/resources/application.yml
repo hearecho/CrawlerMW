@@ -1,2 +1,11 @@
 server:
-    8080
+  8080
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/spider?useSSL=false&characterEncoding=utf-8&useUnicode=true
+    username: root
+    password: 123456
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
