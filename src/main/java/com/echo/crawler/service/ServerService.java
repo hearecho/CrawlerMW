@@ -19,4 +19,11 @@ public interface ServerService {
      * @return
      */
     List<ServerEntity> getAllServersByStatus(int status);
+
+    /**
+     * 新增一个新的服务器
+     * @param serverEntity
+     * @return
+     */
+    boolean addServer(ServerEntity serverEntity);
 }

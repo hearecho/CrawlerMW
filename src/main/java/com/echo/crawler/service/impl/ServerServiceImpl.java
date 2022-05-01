@@ -22,4 +22,10 @@ public class ServerServiceImpl implements ServerService {
     public List<ServerEntity> getAllServersByStatus(int status) {
         return serverMapper.queryByStatus(status);
     }
+
+    @Override
+    public boolean addServer(ServerEntity serverEntity) {
+        return serverMapper.insert(serverEntity.getIp(), serverEntity.getUser(), serverEntity.getPwd(),
+                serverEntity.getStatus(), serverEntity.getPort());
+    }
 }

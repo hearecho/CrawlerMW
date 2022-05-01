@@ -1,6 +1,7 @@
 package com.echo.crawler.mapper;
 
 import com.echo.crawler.entity.ServerEntity;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
@@ -23,4 +24,7 @@ public interface ServerMapper {
      */
     @Select("select * from servers")
     List<ServerEntity> queryAll();
+
+    @Insert("insert into servers(ip, user, pwd, status, port) values(#{ip}, #{user}, #{pwd}, #{port})")
+    Boolean insert(String ip, String user, String pwd, int status, String port);
 }
