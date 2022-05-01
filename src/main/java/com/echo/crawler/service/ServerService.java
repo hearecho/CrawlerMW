@@ -26,4 +26,11 @@ public interface ServerService {
      * @return
      */
     boolean addServer(ServerEntity serverEntity);
+
+    /**
+     * 通过ip获取Server，如果没有则返回nil
+     * @param ip
+     * @return
+     */
+    ServerEntity findByIp(String ip);
 }

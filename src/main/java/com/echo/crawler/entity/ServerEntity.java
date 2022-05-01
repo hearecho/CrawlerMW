@@ -29,4 +29,15 @@ public class ServerEntity {
      * 服务器连接端口
      */
     private String port;
+
+    public ServerEntity() {
+
+    }
+    public ServerEntity(String ip, String user, String pwd, String port, int status) {
+        this.ip = ip;
+        this.port = port;
+        this.user = user;
+        this.pwd = pwd;
+        this.status = status;
+    }
 }

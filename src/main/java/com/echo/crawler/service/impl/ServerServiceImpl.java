@@ -28,4 +28,9 @@ public class ServerServiceImpl implements ServerService {
         return serverMapper.insert(serverEntity.getIp(), serverEntity.getUser(), serverEntity.getPwd(),
                 serverEntity.getStatus(), serverEntity.getPort());
     }
+
+    @Override
+    public ServerEntity findByIp(String ip) {
+        return serverMapper.findByIp(ip);
+    }
 }

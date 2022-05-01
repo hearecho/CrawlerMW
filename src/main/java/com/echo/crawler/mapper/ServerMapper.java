@@ -18,6 +18,8 @@ public interface ServerMapper {
     @Select("select * from servers where status = #{status}")
     List<ServerEntity> queryByStatus(int status);
 
+    @Select("select * from servers where ip = #{ip}")
+    ServerEntity findByIp(String ip);
     /**
      * 查询全部服务器
      * @return 服务器数组
@@ -25,6 +27,6 @@ public interface ServerMapper {
     @Select("select * from servers")
     List<ServerEntity> queryAll();
 
-    @Insert("insert into servers(ip, user, pwd, status, port) values(#{ip}, #{user}, #{pwd}, #{port})")
+    @Insert("insert into servers(ip, user, pwd, status, port) values(#{ip}, #{user}, #{pwd}, #{status}, #{port})")
     Boolean insert(String ip, String user, String pwd, int status, String port);
 }
