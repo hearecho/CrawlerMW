@@ -33,4 +33,14 @@ public class ServerServiceImpl implements ServerService {
     public ServerEntity findByIp(String ip) {
         return serverMapper.findByIp(ip);
     }
+
+    @Override
+    public boolean deleteIp(String ip) {
+        return serverMapper.delete(ip);
+    }
+
+    @Override
+    public boolean updateStatus(String ip, int status) {
+        return serverMapper.updateStatus(ip, status);
+    }
 }

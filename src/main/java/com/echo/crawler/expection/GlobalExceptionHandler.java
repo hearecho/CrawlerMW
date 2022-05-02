@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.HttpClientErrorException;
 
+import java.io.IOException;
+
 /**
  * 全局错误处理，防止直接返回springboot自带的response
  */
@@ -34,6 +36,13 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(JSchException.class)
     @ResponseBody
     public R error(JSchException e) {
+        return R.error().message(e.getMessage());
+    }
+
+    /**----------------IOException-----------**/
+    @ExceptionHandler(IOException.class)
+    @ResponseBody
+    public R error(IOException e) {
         return R.error().message(e.getMessage());
     }
 

@@ -1,10 +1,7 @@
 package com.echo.crawler.mapper;
 
 import com.echo.crawler.entity.ServerEntity;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Results;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -28,5 +25,11 @@ public interface ServerMapper {
     List<ServerEntity> queryAll();
 
     @Insert("insert into servers(ip, user, pwd, status, port) values(#{ip}, #{user}, #{pwd}, #{status}, #{port})")
-    Boolean insert(String ip, String user, String pwd, int status, String port);
+    boolean insert(String ip, String user, String pwd, int status, String port);
+
+    @Delete("delete from servers where ip = #{ip}")
+    boolean delete(String ip);
+
+    @Update("update servers set status = #{status} where ip = #{ip}")
+    boolean updateStatus(String ip, int status);
 }

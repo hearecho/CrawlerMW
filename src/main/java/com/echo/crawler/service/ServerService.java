@@ -33,4 +33,19 @@ public interface ServerService {
      * @return
      */
     ServerEntity findByIp(String ip);
+
+    /**
+     * 通过ip删除对应的主机
+     * @param ip
+     * @return
+     */
+    boolean deleteIp(String ip);
+
+    /**
+     * 更新对应主机的状态
+     * @param ip
+     * @param status
+     * @return
+     */
+    boolean updateStatus(String ip, int status);
 }
