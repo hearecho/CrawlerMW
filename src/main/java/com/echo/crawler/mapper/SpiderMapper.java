@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
+import java.util.Date;
 import java.util.List;
 
 @Mapper
@@ -27,12 +28,13 @@ public interface SpiderMapper {
     boolean updateFile(boolean file, String filePath, String name);
 
     @Update("update spiders set name=#{spider.name}, file=#{spider.file}, filePath=#{spider.filePath}," +
-            "#{spider.docker}, #{spider.dockerName},#{spider.dockerID}, #{spider.status} where name = #{name}")
+            "docker=#{spider.docker}, dockerName=#{spider.dockerName}, dockerID=#{spider.dockerID}, " +
+            "status=#{spider.status}, distribute=#{spider.distribute} where name = #{name}")
     boolean updateSpider(SpiderEntity spider, String name);
 
-    @Update("insert into spiders(name, file, filePath, docker, dockerName, dockerID, status, createAt) " +
-            "values(#{spider.name}, #{spider.file}, #{spider.filePath}, #{spider.docker}, #{spider.dockerName}," +
-            "#{spider.dockerID}, #{spider.status}, #{spider.createAt})")
+    @Update("insert into spiders(name, file, filePath, docker, dockerName, dockerID, status, createAt, distribute) " +
+            "values(#{name}, #{file}, #{filePath}, #{docker}, #{dockerName}," +
+            "#{dockerID}, #{status}, #{createAt}, #{distribute})")
     boolean add(SpiderEntity spider);
 
     @Update("update spiders set status = #{status} where name = #{name}")

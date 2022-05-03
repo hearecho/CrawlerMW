@@ -4,9 +4,11 @@ import com.echo.crawler.entity.SpiderEntity;
 import com.echo.crawler.mapper.SpiderMapper;
 import com.echo.crawler.service.SpiderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class SpiderServiceImpl implements SpiderService {
 
     @Autowired

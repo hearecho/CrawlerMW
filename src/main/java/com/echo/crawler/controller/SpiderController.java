@@ -7,6 +7,7 @@ import com.echo.crawler.utils.PaginationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.websocket.server.PathParam;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,9 +42,9 @@ public class SpiderController {
      * @param name spider名称，用于定位
      * @return
      */
-    @PostMapping("/update")
-    public R updateSpider(@RequestParam(name = "name") String name,
-                          @RequestParam(name = "spider") SpiderEntity spider) {
+    @PostMapping("/update/{name}")
+    public R updateSpider(@PathParam("name") String name,
+                          @ModelAttribute SpiderEntity spider) {
         SpiderEntity one = spiderService.findOneByName(name);
         if (one == null) {
             return R.error().message("unknown spider name");
@@ -60,6 +61,7 @@ public class SpiderController {
      * @param name spider名称，用于定位
      * @return
      */
+    @DeleteMapping("/delete")
     public R deleteSpider(@RequestParam(name = "name") String name) {
         SpiderEntity one = spiderService.findOneByName(name);
         if (one == null) {
@@ -70,5 +72,21 @@ public class SpiderController {
             return R.error();
         }
         return R.ok().message("delete success");
+    }
+
+    /**
+     * @ModelAttribute 作用是防止出现
+     * Content type 'multipart/form-data;boundary=----WebKitFormBoundarynZRnvRobJ6LfOyby;charset=UTF-8' not supported错误
+     * @param spider
+     * @return
+     */
+    @PostMapping("/add")
+    public R newSpider(@ModelAttribute SpiderEntity spider) {
+        spider.status = true;
+        boolean res = spiderService.add(spider);
+        if (res) {
+            return R.ok().message("add success");
+        }
+        return R.error().message("add fail");
     }
 }

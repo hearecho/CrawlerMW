@@ -43,13 +43,26 @@ public class SpiderEntity {
      */
     public Date createAt = new Date();
 
+    public boolean distribute;
     public SpiderEntity() {
     }
 
-    public SpiderEntity(String name, boolean file, boolean docker, boolean status) {
+    public SpiderEntity(String name, boolean file, boolean docker, boolean status, boolean distribute) {
         this.name = name;
         this.file = file;
         this.docker = docker;
         this.status = status;
+        this.distribute = distribute;
+    }
+
+    public SpiderEntity(String name, boolean file, String filePath, boolean docker,
+                        String dockerName, String dockerID,boolean distribute) {
+        this.name = name;
+        this.file = file;
+        this.filePath = filePath;
+        this.docker = docker;
+        this.dockerName = dockerName;
+        this.dockerID = dockerID;
+        this.distribute = distribute;
     }
 }
