@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.websocket.server.PathParam;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/spider")
@@ -48,6 +49,13 @@ public class SpiderController {
         SpiderEntity one = spiderService.findOneByName(name);
         if (one == null) {
             return R.error().message("unknown spider name");
+        }
+        if (!one.name.equals(spider.name)) {
+            // 更改了名称 需要确认数据库中没有对应的name
+            SpiderEntity temp = spiderService.findOneByName(spider.name);
+            if (temp != null) {
+                return R.error().message("duplicate name");
+            }
         }
         boolean res = spiderService.updateSpider(spider, name);
         if (!res) {

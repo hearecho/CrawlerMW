@@ -2,9 +2,11 @@ package com.echo.crawler.entity;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 
 @Data
-public class ServerEntity {
+public class ServerEntity implements Serializable {
     /**
      * 服务器ip地址
      */

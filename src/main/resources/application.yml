@@ -6,6 +6,17 @@ spring:
     url: jdbc:mysql://127.0.0.1:3306/spider?useSSL=false&characterEncoding=utf-8&useUnicode=true
     username: root
     password: 123456
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    timeout: 10000
+    database: 0
+    lettuce:
+      pool:
+        max-active: 100
+        max-wait: -1
+        min-idle: 10
+        max-idle: 32
 mybatis:
   configuration:
     map-underscore-to-camel-case: true

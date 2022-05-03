@@ -2,10 +2,11 @@ package com.echo.crawler.entity;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Date;
 
 @Data
-public class SpiderEntity {
+public class SpiderEntity implements Serializable {
     /**
      * ID信息
      */
