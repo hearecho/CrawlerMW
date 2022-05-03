@@ -1,6 +1,7 @@
 package com.echo.crawler.controller;
 
 import com.echo.crawler.entity.ServerEntity;
+import com.echo.crawler.entity.SpiderEntity;
 import com.echo.crawler.response.R;
 import com.echo.crawler.service.ServerService;
 import com.echo.crawler.utils.IPUtil;
@@ -36,15 +37,12 @@ public class ServerController {
         }
         int num = allServers.size();
         // 分页
-        int startIndex = PaginationUtil.getStartIndex(page, pageSize);
-        if (startIndex > num) {
-            startIndex = num;
+        int[] indexes = PaginationUtil.getRange(page,pageSize,num);
+        List<ServerEntity> res = allServers.subList(indexes[0], indexes[1]);
+        for (ServerEntity server: res) {
+            // 模糊密码
+            server.setPwd("******");
         }
-        int endIndex = startIndex + pageSize;
-        if (endIndex > num) {
-            endIndex = num;
-        }
-        List<ServerEntity> res = allServers.subList(startIndex, endIndex);
         return r.data(res, res.size());
     }
 
