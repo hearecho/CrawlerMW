@@ -7,6 +7,7 @@ import com.echo.crawler.service.ServerService;
 import com.echo.crawler.utils.IPUtil;
 import com.echo.crawler.utils.PaginationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -22,6 +23,11 @@ import java.util.List;
 public class ServerController {
     @Autowired
     ServerService serverService;
+
+    @Autowired
+    RedisTemplate redisTemplate;
+
+    private final String refreshAllKey = "refreshAllHost";
 
     @GetMapping("/all")
     public R getAllServers(@RequestParam(name = "status", required = false, defaultValue = "") String status,
@@ -103,6 +109,9 @@ public class ServerController {
             serverEntities.add(server);
         }
         // 更新操作
+        // 这里需要做的是在redis进行缓存，并设置一定的过期时间
+        // 防止频繁刷新，不仅会导致慢接口，还会导致网络资源的浪费
+
         for (ServerEntity server: serverEntities) {
             boolean newStatus =  IPUtil.ping(server.getIp());
             if (newStatus && server.getStatus() == 0) {
@@ -116,4 +125,7 @@ public class ServerController {
         // todo 返回更新之后的hos
         return R.ok().data(serverEntities, serverEntities.size());
     }
+
+
+
 }
