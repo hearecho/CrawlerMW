@@ -54,10 +54,10 @@ class RedisServiceTests {
     @Test
     void TestString() {
         String ip = "192.168.1.5";
-        String server = redisService.getValue("host-"+ip);
+        ServerEntity server = (ServerEntity) redisService.getValue("host-"+ip);
         if (server == null) {
             System.out.println("redis 未命中");
-            server = serverService.findByIp(ip).toString();
+            server = serverService.findByIp(ip);
             redisService.cacheValue("host-"+ip, server, 30);
         }
         redisService.removeValue("host-"+ip);
@@ -70,7 +70,7 @@ class RedisServiceTests {
     @Test
     void TestSet() {
         String key = "hosts-all";
-        
+
     }
 
 }

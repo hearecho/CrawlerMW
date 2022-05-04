@@ -15,7 +15,7 @@ public interface RedisService {
      * @param time
      * @return
      */
-    boolean cacheValue(String key, String value, long time);
+    boolean cacheValue(String key, Object value, long time);
 
     /**
      * 添加 key: String 缓存 不带有过期时间
@@ -23,7 +23,7 @@ public interface RedisService {
      * @param value
      * @return
      */
-    boolean cacheValue(String key, String value);
+    boolean cacheValue(String key, Object value);
 
     /**
      * 判断key:string 缓存是否存在
@@ -58,7 +58,7 @@ public interface RedisService {
      * @param key
      * @return
      */
-    String getValue(String key);
+    Object getValue(String key);
 
     /**
      * 根据key删除缓存
@@ -71,29 +71,29 @@ public interface RedisService {
 
     boolean removeList(String key);
 
-    boolean cacheSet(String key, String value, long time);
+    boolean cacheSet(String key, Object value, long time);
 
-    boolean cacheSet(String key, String value);
+    boolean cacheSet(String key, Object value);
 
-    boolean cacheSet(String key, Set<String> value, long time);
+    boolean cacheSet(String key, Set<Object> value, long time);
 
-    boolean cacheSet(String key, Set<String> value);
+    boolean cacheSet(String key, Set<Object> value);
 
-    Set<String> getSet(String key);
+    Set<Object> getSet(String key);
 
-    boolean cacheList(String key, String value, long time);
+    boolean cacheList(String key, Object value, long time);
 
-    boolean cacheList(String key, String value);
+    boolean cacheList(String key, Object value);
 
-    boolean cacheList(String key, List<String> value, long time);
+    boolean cacheList(String key, List<Object> value, long time);
 
-    boolean cacheList(String key, List<String> value);
+    boolean cacheList(String key, List<Object> value);
 
-    List<String> getList(String key, long start, long end);
+    List<Object> getList(String key, long start, long end);
 
     long getListSize(String key);
 
-    long getListSize(ListOperations<String, String> listOps, String k);
+    long getListSize(ListOperations<String, Object> listOps, String k);
 
     boolean removeOneOfList(String key);
 }

@@ -26,18 +26,18 @@ public class RedisServiceImpl implements RedisService {
     private static final String KEY_PREFIX_SET = "info:key";
     private static final String KEY_PREFIX_LIST = "info:key";
 
-    private final RedisTemplate<String, String> redisTemplate;
+    private final RedisTemplate<String, Object> redisTemplate;
 
-    public RedisServiceImpl(RedisTemplate<String, String> redisTemplate) {
+    public RedisServiceImpl(RedisTemplate<String, Object> redisTemplate) {
         this.redisTemplate = redisTemplate;
     }
 
 
     @Override
-    public boolean cacheValue(String key, String value, long time) {
+    public boolean cacheValue(String key, Object value, long time) {
         try {
             String k = KEY_PREFIX_KEY + key;
-            ValueOperations<String, String> ops = redisTemplate.opsForValue();
+            ValueOperations<String, Object> ops = redisTemplate.opsForValue();
             ops.set(k, value);
             if (time > 0) {
                 redisTemplate.expire(key, time, TimeUnit.SECONDS);
@@ -50,7 +50,7 @@ public class RedisServiceImpl implements RedisService {
     }
 
     @Override
-    public boolean cacheValue(String key, String value) {
+    public boolean cacheValue(String key, Object value) {
         return cacheValue(key, value, -1);
     }
 
@@ -80,9 +80,9 @@ public class RedisServiceImpl implements RedisService {
     }
 
     @Override
-    public String getValue(String key) {
+    public Object getValue(String key) {
         try {
-            ValueOperations<String, String> ops = redisTemplate.opsForValue();
+            ValueOperations<String, Object> ops = redisTemplate.opsForValue();
             return ops.get(KEY_PREFIX_KEY+key);
         } catch (Exception e) {
             log.error("get cache error; key:[{}]; error:{}", key, e.getMessage());
@@ -115,10 +115,10 @@ public class RedisServiceImpl implements RedisService {
     }
 
     @Override
-    public boolean cacheSet(String key, String value, long time) {
+    public boolean cacheSet(String key, Object value, long time) {
         try {
             String k = KEY_PREFIX_SET + key;
-            SetOperations<String,String> ops = redisTemplate.opsForSet();
+            SetOperations<String,Object> ops = redisTemplate.opsForSet();
             ops.add(k, value);
             if (time > 0) {
                 redisTemplate.expire(k, time, TimeUnit.SECONDS);
@@ -131,16 +131,16 @@ public class RedisServiceImpl implements RedisService {
     }
 
     @Override
-    public boolean cacheSet(String key, String value) {
+    public boolean cacheSet(String key, Object value) {
         return cacheSet(key, value, -1);
     }
 
     @Override
-    public boolean cacheSet(String key, Set<String> value, long time) {
+    public boolean cacheSet(String key, Set<Object> value, long time) {
         try {
             String k = KEY_PREFIX_SET + key;
-            SetOperations<String,String> ops = redisTemplate.opsForSet();
-            ops.add(k, value.toArray(new String[0]));
+            SetOperations<String,Object> ops = redisTemplate.opsForSet();
+            ops.add(k, value.toArray(new Object[0]));
             if (time > 0) {
                 redisTemplate.expire(k, time, TimeUnit.SECONDS);
             }
@@ -152,14 +152,14 @@ public class RedisServiceImpl implements RedisService {
     }
 
     @Override
-    public boolean cacheSet(String key, Set<String> value) {
+    public boolean cacheSet(String key, Set<Object> value) {
         return cacheSet(key, value, -1);
     }
 
     @Override
-    public Set<String> getSet(String key) {
+    public Set<Object> getSet(String key) {
         try {
-            SetOperations<String, String> ops = redisTemplate.opsForSet();
+            SetOperations<String, Object> ops = redisTemplate.opsForSet();
             return ops.members(KEY_PREFIX_SET+key);
         } catch (Exception e) {
             log.error("get cache error; key:[{}]; error:{}", key, e.getMessage());
@@ -168,10 +168,10 @@ public class RedisServiceImpl implements RedisService {
     }
 
     @Override
-    public boolean cacheList(String key, String value, long time) {
+    public boolean cacheList(String key, Object value, long time) {
         try {
             String k = KEY_PREFIX_LIST + key;
-            ListOperations<String,String> ops = redisTemplate.opsForList();
+            ListOperations<String,Object> ops = redisTemplate.opsForList();
             ops.rightPush(k, value);
             if (time > 0) {
                 redisTemplate.expire(k, time, TimeUnit.SECONDS);
@@ -184,15 +184,15 @@ public class RedisServiceImpl implements RedisService {
     }
 
     @Override
-    public boolean cacheList(String key, String value) {
+    public boolean cacheList(String key, Object value) {
         return cacheList(key,value,-1);
     }
 
     @Override
-    public boolean cacheList(String key, List<String> value, long time) {
+    public boolean cacheList(String key, List<Object> value, long time) {
         try {
             String k = KEY_PREFIX_LIST + key;
-            ListOperations<String,String> ops = redisTemplate.opsForList();
+            ListOperations<String,Object> ops = redisTemplate.opsForList();
             ops.rightPushAll(k, value);
             if (time > 0) {
                 redisTemplate.expire(k, time, TimeUnit.SECONDS);
@@ -205,14 +205,14 @@ public class RedisServiceImpl implements RedisService {
     }
 
     @Override
-    public boolean cacheList(String key, List<String> value) {
+    public boolean cacheList(String key, List<Object> value) {
         return cacheList(key, value, -1);
     }
 
     @Override
-    public List<String> getList(String key, long start, long end) {
+    public List<Object> getList(String key, long start, long end) {
         try {
-            ListOperations<String, String> ops = redisTemplate.opsForList();
+            ListOperations<String, Object> ops = redisTemplate.opsForList();
             return ops.range(KEY_PREFIX_LIST+key, start, end);
         } catch (Exception e) {
             log.error("get cache error; key:[{}]; error:{}", key, e.getMessage());
@@ -223,7 +223,7 @@ public class RedisServiceImpl implements RedisService {
     @Override
     public long getListSize(String key) {
         try {
-            ListOperations<String, String> ops = redisTemplate.opsForList();
+            ListOperations<String, Object> ops = redisTemplate.opsForList();
             return ops.size(KEY_PREFIX_LIST+key);
         } catch (Exception e) {
             log.error("get list size error; key:[{}]; error:{}", key, e.getMessage());
@@ -232,7 +232,7 @@ public class RedisServiceImpl implements RedisService {
     }
 
     @Override
-    public long getListSize(ListOperations<String, String> listOps, String k) {
+    public long getListSize(ListOperations<String, Object> listOps, String k) {
         try {
             return listOps.size(k);
         } catch (Exception e) {
@@ -245,7 +245,7 @@ public class RedisServiceImpl implements RedisService {
     public boolean removeOneOfList(String key) {
         try {
             String k = KEY_PREFIX_LIST + key;
-            ListOperations<String,String> ops = redisTemplate.opsForList();
+            ListOperations<String,Object> ops = redisTemplate.opsForList();
             ops.rightPop(k);
             return true;
         } catch (Exception e) {
