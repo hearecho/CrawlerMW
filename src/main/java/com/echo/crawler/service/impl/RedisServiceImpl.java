@@ -4,6 +4,8 @@ import com.echo.crawler.service.RedisService;
 import org.omg.CORBA.TIMEOUT;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Bean;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SetOperations;
@@ -29,6 +31,7 @@ public class RedisServiceImpl implements RedisService {
     public RedisServiceImpl(RedisTemplate<String, String> redisTemplate) {
         this.redisTemplate = redisTemplate;
     }
+
 
     @Override
     public boolean cacheValue(String key, String value, long time) {
