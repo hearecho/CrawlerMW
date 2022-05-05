@@ -8,9 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisTemplate;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @SpringBootTest
@@ -62,7 +60,7 @@ class RedisServiceTests {
             server = serverService.findByIp(ip);
             redisService.cacheValue("host-"+ip, server, 30);
         }
-//        redisService.removeValue("host-"+ip);
+        redisService.removeValue("host-"+ip);
         System.out.println(server);
     }
 
@@ -71,7 +69,38 @@ class RedisServiceTests {
      */
     @Test
     void TestList() {
+        String key = "all";
+        List<ServerEntity> servers = new ArrayList<>();
+        if (redisService.containsListKey(key)) {
+            System.out.println("redis 命中");
+            long size = redisService.getListSize(key);
+            servers = redisService.getList(key, 0, size);
+        } else {
+            System.out.println("redis 未命中");
+            servers = serverService.getAllServers();
+            redisService.cacheList(key, servers, 30);
+        }
+        System.out.println(servers);
+    }
 
+    /**
+     * 测试存取Set，以及去重
+     */
+    @Test
+    void TestSet() {
+        String key = "all";
+        Set<ServerEntity> servers = new HashSet<>();
+        if (redisService.containsSetKey(key)) {
+            System.out.println("redis 命中");
+            servers = redisService.getSet(key);
+        } else {
+            System.out.println("redis 未命中");
+            ServerEntity server1 = serverService.findByIp("192.168.1.5");
+            servers = new HashSet<>(serverService.getAllServers());
+            redisService.cacheSet(key, servers);
+            redisService.cacheSet(key, server1);
+        }
+        System.out.println(servers.size());
     }
 
 }
