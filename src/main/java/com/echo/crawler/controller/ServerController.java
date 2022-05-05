@@ -3,6 +3,7 @@ package com.echo.crawler.controller;
 import com.echo.crawler.entity.ServerEntity;
 import com.echo.crawler.entity.SpiderEntity;
 import com.echo.crawler.response.R;
+import com.echo.crawler.service.RedisService;
 import com.echo.crawler.service.ServerService;
 import com.echo.crawler.utils.IPUtil;
 import com.echo.crawler.utils.PaginationUtil;
@@ -25,7 +26,7 @@ public class ServerController {
     ServerService serverService;
 
     @Autowired
-    RedisTemplate redisTemplate;
+    RedisService<ServerEntity> redisService;
 
     private final String refreshAllKey = "refreshAllHost";
 
@@ -102,27 +103,38 @@ public class ServerController {
     @GetMapping("/refresh")
     public R refreshServers(@RequestParam(name = "ip", required = false, defaultValue = "")String ip) {
         List<ServerEntity> serverEntities = new ArrayList<>();
-        if ("".equals(ip)) {
-            serverEntities = serverService.getAllServers();
-        } else {
-            ServerEntity server = serverService.findByIp(ip);
-            serverEntities.add(server);
-        }
+        String key = "refreshHost";
         // 更新操作
         // 这里需要做的是在redis进行缓存，并设置一定的过期时间
         // 防止频繁刷新，不仅会导致慢接口，还会导致网络资源的浪费
-
-        for (ServerEntity server: serverEntities) {
-            boolean newStatus =  IPUtil.ping(server.getIp());
-            if (newStatus && server.getStatus() == 0) {
-                server.setStatus(1);
-                serverService.updateStatus(server.getIp(), 1);
-            } else if (!newStatus && server.getStatus() == 1) {
-                server.setStatus(0);
-                serverService.updateStatus(server.getIp(), 0);
+        if (redisService.containsListKey(key)) {
+            // 命中了redis
+            long size = redisService.getListSize(key);
+            serverEntities = redisService.getList(key, 0, size);
+        } else {
+            // 未命中，则需要重新刷新所有的ip
+            if ("".equals(ip)) {
+                serverEntities = serverService.getAllServers();
+            } else {
+                ServerEntity server = serverService.findByIp(ip);
+                serverEntities.add(server);
             }
+
+            for (ServerEntity server: serverEntities) {
+                boolean newStatus =  IPUtil.ping(server.getIp());
+                if (newStatus && server.getStatus() == 0) {
+                    server.setStatus(1);
+                    serverService.updateStatus(server.getIp(), 1);
+                } else if (!newStatus && server.getStatus() == 1) {
+                    server.setStatus(0);
+                    serverService.updateStatus(server.getIp(), 0);
+                }
+            }
+            // 在redis中插入
+            // 设置过期时间 30s
+            redisService.cacheList(key, serverEntities, 30);
+            // todo 返回更新之后的hos
         }
-        // todo 返回更新之后的hos
         return R.ok().data(serverEntities, serverEntities.size());
     }
 
