@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisTemplate;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -20,7 +22,7 @@ class RedisServiceTests {
     private ServerService serverService;
 
     @Autowired
-    private RedisService redisService;
+    private RedisService<ServerEntity> redisService;
     @Test
     void getHostStatus() {
         String ip = "192.168.1.5";
@@ -54,13 +56,13 @@ class RedisServiceTests {
     @Test
     void TestString() {
         String ip = "192.168.1.5";
-        ServerEntity server = (ServerEntity) redisService.getValue("host-"+ip);
+        ServerEntity server = redisService.getValue("host-"+ip);
         if (server == null) {
             System.out.println("redis 未命中");
             server = serverService.findByIp(ip);
             redisService.cacheValue("host-"+ip, server, 30);
         }
-        redisService.removeValue("host-"+ip);
+//        redisService.removeValue("host-"+ip);
         System.out.println(server);
     }
 
@@ -68,8 +70,7 @@ class RedisServiceTests {
      * 测试存取List
      */
     @Test
-    void TestSet() {
-        String key = "hosts-all";
+    void TestList() {
 
     }
 

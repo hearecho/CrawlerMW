@@ -8,10 +8,11 @@ import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
-public class RedisConfig {
+public class RedisConfig<T> {
+
     @Bean
-    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory factory) {
-        RedisTemplate<String, Object> template = new RedisTemplate<>();
+    public RedisTemplate<String, T> redisTemplate(RedisConnectionFactory factory) {
+        RedisTemplate<String, T> template = new RedisTemplate<>();
         template.setConnectionFactory(factory);
 
         template.setKeySerializer(new StringRedisSerializer());
