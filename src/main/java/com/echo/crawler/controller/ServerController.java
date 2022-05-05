@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * 主机管理，主要负责主机的状态查询，刷新主机状态，获取主机信息
@@ -101,7 +104,7 @@ public class ServerController {
      * @return
      */
     @GetMapping("/refresh")
-    public R refreshServers(@RequestParam(name = "ip", required = false, defaultValue = "")String ip) {
+    public R refreshServers(@RequestParam(name = "ip", required = false, defaultValue = "")String ip) throws InterruptedException {
         List<ServerEntity> serverEntities = new ArrayList<>();
         String key = "refreshHost";
         // 更新操作
@@ -119,17 +122,26 @@ public class ServerController {
                 ServerEntity server = serverService.findByIp(ip);
                 serverEntities.add(server);
             }
-
+            // 使用多线程（线程池）并发请求所有的ping请求
+            // 并使用CountDownLatch
+            int totalThread = serverEntities.size();
+            CountDownLatch countDownLatch = new CountDownLatch(totalThread);
+            ExecutorService executorService = Executors.newCachedThreadPool();
             for (ServerEntity server: serverEntities) {
-                boolean newStatus =  IPUtil.ping(server.getIp());
-                if (newStatus && server.getStatus() == 0) {
-                    server.setStatus(1);
-                    serverService.updateStatus(server.getIp(), 1);
-                } else if (!newStatus && server.getStatus() == 1) {
-                    server.setStatus(0);
-                    serverService.updateStatus(server.getIp(), 0);
-                }
+                executorService.execute(() -> {
+                    boolean newStatus =  IPUtil.ping(server.getIp());
+                    if (newStatus && server.getStatus() == 0) {
+                        server.setStatus(1);
+                        serverService.updateStatus(server.getIp(), 1);
+                    } else if (!newStatus && server.getStatus() == 1) {
+                        server.setStatus(0);
+                        serverService.updateStatus(server.getIp(), 0);
+                    }
+                    countDownLatch.countDown();
+                });
             }
+            countDownLatch.await();
+            executorService.shutdown();
             // 在redis中插入
             // 设置过期时间 30s
             redisService.cacheList(key, serverEntities, 30);
